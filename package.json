@@ -1,38 +1,68 @@
 {
   "name": "sfdc-ci-toolkit-cli",
-  "version": "0.0.1",
-  "description": "Version cli de sfdc-ci-toolkit",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+  "description": "Une description",
+  "version": "0.0.0",
+  "author": "BIEBER Baptiste @baptistebieber",
+  "bin": {
+    "sfdcci": "./bin/run"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/baptistebieber/sfdc-ci-toolkit-cli.git"
-  },
-  "keywords": [
-    "cli",
-    "sfdc",
-    "salesforce",
-    "git"
-  ],
-  "author": "Baptiste BIEBER <baptiste.bieber@gmail.com>",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/baptistebieber/sfdc-ci-toolkit-cli/issues"
-  },
-  "homepage": "https://github.com/baptistebieber/sfdc-ci-toolkit-cli#readme",
+  "bugs": "https://github.com/baptistebieber/sfdc-ci-toolkit-cli/issues",
   "dependencies": {
-    "@octokit/rest": "^14.0.5",
-    "chalk": "^2.3.0",
-    "clear": "0.0.1",
-    "clui": "^0.3.6",
+    "@oclif/command": "^1.4.34",
+    "@oclif/config": "^1.6.33",
+    "@oclif/plugin-help": "^2.0.5",
+    "tslib": "^1.9.3"
+  },
+  "devDependencies": {
+    "@oclif/dev-cli": "^1.15.4",
+    "@oclif/test": "^1.1.0",
+    "@oclif/tslint": "^1.1.2",
+    "@types/chai": "^4.1.4",
+    "@types/mocha": "^5.2.4",
+    "@types/node": "^10.5.2",
+    "chai": "^4.1.2",
+    "globby": "^8.0.1",
+    "mocha": "^5.2.0",
+    "nyc": "^12.0.2",
+    "rimraf": "^2.6.2",
+    "ts-node": "^6.2.0",
+    "tslint": "^5.10.0",
+    "typescript": "^2.9.2",
+    "yeoman-environment": "^2.3.0",
+    "yeoman-generator": "^3.0.0",
     "configstore": "^3.1.1",
-    "figlet": "^1.2.0",
-    "inquirer": "^5.0.1",
-    "lodash": "^4.17.4",
-    "minimist": "^1.2.0",
-    "simple-git": "^1.89.0",
-    "touch": "^3.1.0"
-  }
+    "sfdc-ci-toolkit": "^1.2.1"
+  },
+  "engines": {
+    "node": ">=8.0.0"
+  },
+  "files": [
+    "/bin",
+    "/lib",
+    "/npm-shrinkwrap.json",
+    "/oclif.manifest.json"
+  ],
+  "homepage": "https://github.com/baptistebieber/sfdc-ci-toolkit-cli",
+  "keywords": [
+    "oclif"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "oclif": {
+    "commands": "./lib/commands",
+    "bin": "sfdcci",
+    "plugins": [
+      "@oclif/plugin-help"
+    ]
+  },
+  "repository": "baptistebieber/sfdc-ci-toolkit-cli",
+  "scripts": {
+    "postpack": "rimraf oclif.manifest.json npm-shrinkwrap.json",
+    "posttest": "tsc -p test --noEmit && tslint -p test -t stylish",
+    "prepack": "rimraf lib && tsc && oclif-dev manifest && oclif-dev readme && npm shrinkwrap",
+    "prepare": "rimraf lib && tsc",
+    "test": "nyc mocha --forbid-only \"test/**/*.test.ts\"",
+    "version": "oclif-dev readme && git add README.md"
+  },
+  "types": "lib/index.d.ts"
 }
