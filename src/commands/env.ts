@@ -8,13 +8,13 @@ export interface Options {
 }
 
 export default abstract class EnvCommand extends Base {
-  static description = 'add a environment to an existing CLI or plugin'
+  static description = 'Manage environments'
 
   static flags = {
     name: flags.string({description: 'name of environment'}),
   }
   static args = [
-    {name: 'event', description: 'event to run', required: true, default: 'list', options: ['list', 'show', 'add', 'edit', 'delete']}
+    {name: 'event', description: 'event to run', required: true, default: 'list', options: ['list', 'show', 'add', 'edit', 'delete', 'clear', 'export', 'import', 'default']}
   ]
 
   async run() {

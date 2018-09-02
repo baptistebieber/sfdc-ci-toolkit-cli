@@ -1,6 +1,6 @@
 import Command from '@oclif/command'
 
-import {createEnv} from 'yeoman-environment'
+const createEnv = require('yeoman-environment')
 
 
 export default abstract class CommandBase extends Command {
@@ -8,15 +8,15 @@ export default abstract class CommandBase extends Command {
 
     // generatorOptions['_conf'] = conf
 
-    const env = createEnv()
+    const envi = new createEnv()
 
-    env.register(
+    envi.register(
       require.resolve(`./generators/${type}`),
       `oclif:${type}`
     )
 
     await new Promise((resolve, reject) => {
-      env.run(`oclif:${type}`, generatorOptions, (err: Error, results: any) => {
+      envi.run(`oclif:${type}`, generatorOptions, (err: Error, results: any) => {
         if (err) reject(err)
         else resolve(results)
       })
