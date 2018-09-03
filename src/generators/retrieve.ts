@@ -12,6 +12,8 @@ const {version} = require('../../package.json')
 
 const sfdcMetadata = require('sfdc-extended-metadata');
 
+const PLUGIN_NAME = 'retrieve';
+
 module.exports = class RetrieveGenerator extends Generator {
   pjson!: any
   _conf: typeof Configstore;
@@ -66,7 +68,7 @@ module.exports = class RetrieveGenerator extends Generator {
       sfdcMetadata.parseData(config.tmp, config.src, config)
     })
     .catch(err => {
-      options.logger.log('Error '+PLUGIN_NAME+': '+err.message);
+      this.log('Error '+PLUGIN_NAME+': '+err.message);
     })
     
   }

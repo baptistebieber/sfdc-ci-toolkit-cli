@@ -29,9 +29,11 @@ const restricted_name = [
   'default'
 ]
 
-const valid_env_name = (name) => {
+const valid_env_name = (name:string) => {
   return restricted_name.indexOf(name) == -1
 }
+
+const PLUGIN_NAME = 'env';
 
 module.exports = class EnvGenerator extends Generator {
   pjson!: any

@@ -11,6 +11,8 @@ const {version} = require('../../package.json')
 
 const sfdcMetadata = require('sfdc-extended-metadata');
 
+const PLUGIN_NAME = 'deploy';
+
 module.exports = class DeployGenerator extends Generator {
   pjson!: any
   _conf: typeof Configstore;
@@ -81,26 +83,26 @@ module.exports = class DeployGenerator extends Generator {
           }
         )
         .catch(err => {
-          options.logger.log('Error '+PLUGIN_NAME+': '+err.message);
+          this.log('Error '+PLUGIN_NAME+': '+err.message);
         })
       }
     )
     .catch(err => {
-      options.logger.log('Error '+PLUGIN_NAME+': '+err.message);
+      this.log('Error '+PLUGIN_NAME+': '+err.message);
     })
 
   }
 
   _pre() {
     this.log('Execute Full')
-    if(!this._conf.has(this.options.env)) {
+    if(!this._conf.has(this.options.envi)) {
       throw new Error('The environment doesn\'t exist');
     }
   }
 
   _post() {
     this.log('Execute Full')
-    if(!this._conf.has(this.options.env)) {
+    if(!this._conf.has(this.options.envi)) {
       throw new Error('The environment doesn\'t exist');
     }
   }
