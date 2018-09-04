@@ -3,18 +3,17 @@
 import * as _ from 'lodash'
 import * as path from 'path'
 import * as Generator from 'yeoman-generator'
-const fs = require('fs')
 const Configstore = require('configstore');
 
-import {Options} from '../commands/retrieve'
+import {Options} from '../commands/generate-package'
 
 const {version} = require('../../package.json')
 
 const sfdcMetadata = require('sfdc-extended-metadata');
 
-const PLUGIN_NAME = 'retrieve';
+const PLUGIN_NAME = 'generate-package';
 
-module.exports = class RetrieveGenerator extends Generator {
+module.exports = class GeneratePackageGenerator extends Generator {
   pjson!: any
   _conf: typeof Configstore;
 
@@ -29,11 +28,11 @@ module.exports = class RetrieveGenerator extends Generator {
   }
 
   async execute() {
-    this._full()
+    this._generate()
   }
 
-  _full() {
-    this.log('Execute Full')
+  _generate() {
+    this.log('Execute Generate')
 
     if((this.options.envi == '' || this.options.envi == undefined) && this._conf.has('default')) {
       this.log('Default env used: '+ this._conf.get('default'))
@@ -54,24 +53,32 @@ module.exports = class RetrieveGenerator extends Generator {
       password: env.password + env.token,
       loginUrl: env.server_url,
       version: env.version,
-      root: env.root_path,
       src: env.root_path + '/' + env.src_relative_path,
       tmp: env.root_path + '/' + env.tmp_relative_path,
       pollTimeout: 5000*1000,
       pollInterval: 10*1000,
       singlePackage: true,
       verbose: true,
-      logger: console
+      logger: console,
+      indent: env.indent || '    '
     };
 
-    Promise.all([sfdcMetadata.retrieve(config.root + '/package.xml', config.tmp, config)])
-    .then(res => {
-      sfdcMetadata.parseData(config.tmp, config.src, config)
-    })
+    Promise.all([sfdcMetadata.composeData(config.src, config.tmp, config)])
+    .then(res => { 
+        Promise.all([sfdcMetadata.generatePackage(config.tmp, config.src, config)])
+        .then(res => { 
+            this.log(PLUGIN_NAME+': DONE');
+          }
+        )
+        .catch(err => {
+          this.log('Error '+PLUGIN_NAME+': '+err.message);
+        })
+      }
+    )
     .catch(err => {
       this.log('Error '+PLUGIN_NAME+': '+err.message);
     })
-    
+
   }
 
 }
