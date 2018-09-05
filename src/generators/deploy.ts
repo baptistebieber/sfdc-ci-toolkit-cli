@@ -112,8 +112,8 @@ module.exports = class DeployGenerator extends Generator {
     let env = this._conf.get(this.options.envi);
 
     let config = {
-      to: 'recette',
-      from: 'develop',
+      to: this.options.to,
+      from: this.options.from,
       username: env.username,
       password: env.password + env.token,
       loginUrl: env.server_url,
