@@ -15,7 +15,7 @@ export default abstract class DeployCommand extends Base {
     env: flags.string({description: 'name of environment', required: false}),
   }
   static args = [
-    {name: 'type', description: 'type to run', required: true, default: 'full', options: ['full', 'post', 'pre']}
+    {name: 'type', description: 'type to run', required: true, default: 'full', options: ['full', 'post', 'pre', 'diff']}
   ]
 
   async run() {

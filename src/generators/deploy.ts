@@ -38,6 +38,9 @@ module.exports = class DeployGenerator extends Generator {
       case 'post':
         this._post()
         break
+      case 'diff':
+        this._diff()
+        break
       default:
         break
     }
@@ -77,20 +80,62 @@ module.exports = class DeployGenerator extends Generator {
 
     Promise.all([sfdcMetadata.composeData(config.src, config.tmp, config)])
     .then(res => { 
-        Promise.all([sfdcMetadata.generatePackage(config.tmp, config.tmp, config)])
-        .then(res => { 
-            sfdcMetadata.deploy(config.tmp, config)
-          }
-        )
-        .catch(err => {
-          this.log('Error '+PLUGIN_NAME+': '+err.message);
-        })
-      }
-    )
+      Promise.all([sfdcMetadata.generatePackage(config.src, config.tmp, config)])
+      .then(res => { 
+          sfdcMetadata.deploy(config.tmp, config)
+      })
+      .catch(err => {
+        this.log('Error '+PLUGIN_NAME+': '+err.message);
+      })
+    })
     .catch(err => {
       this.log('Error '+PLUGIN_NAME+': '+err.message);
     })
 
+  }
+
+  _diff() {
+    this.log('Execute Diff')
+
+    if((this.options.envi == '' || this.options.envi == undefined) && this._conf.has('default')) {
+      this.log('Default env used: '+ this._conf.get('default'))
+      this.options.envi = this._conf.get('default')
+    }
+    else {
+      this.log('Env used: ', this.options.envi)
+    }
+
+    if(!this._conf.has(this.options.envi)) {
+      throw new Error('The environment doesn\'t exist');
+    }
+
+    let env = this._conf.get(this.options.envi);
+
+    let config = {
+      to: 'recette',
+      from: 'develop',
+      username: env.username,
+      password: env.password + env.token,
+      loginUrl: env.server_url,
+      version: env.version,
+      root: env.root_path,
+      src: env.root_path + '/' + env.src_relative_path,
+      tmp: env.root_path + '/' + env.tmp_relative_path,
+      pollTimeout: 5000*1000,
+      pollInterval: 10*1000,
+      singlePackage: true,
+      verbose: true,
+      logger: console,
+      indent: env.indent || '    '
+    };
+
+    Promise.all([sfdcMetadata.diff(config.from, config.to, config.root, config.src, config.tmp, config)])
+    .then(res => {
+      sfdcMetadata.deploy(config.tmp, config)
+    })
+    .catch(err => {
+      this.log('Error '+PLUGIN_NAME+': '+err.message);
+    })
   }
 
   _pre() {
