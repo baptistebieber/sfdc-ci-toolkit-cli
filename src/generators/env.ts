@@ -140,9 +140,9 @@ module.exports = class EnvGenerator extends Generator {
       {
         name: 'version',
         type: 'list',
-        choices: ['41.0','42.0','43.0'],
+        choices: ['41.0','42.0','43.0','44.0'],
         message: 'Enter your version:',
-        default: credentials.version || '42.0'
+        default: credentials.version || '43.0'
       },
       {
         name: 'server_url',
@@ -155,7 +155,7 @@ module.exports = class EnvGenerator extends Generator {
             return 'Please enter your server url.';
           }
         },
-        default: credentials.server_url || 'login.salesforce.com'
+        default: credentials.server_url || 'https://login.salesforce.com'
       },
       {
         name: 'test_level',
@@ -205,7 +205,6 @@ module.exports = class EnvGenerator extends Generator {
       }
     ]).then((answers) => {
       this._conf.set(answers.name, answers)
-      this.log('app name', answers.name);
       this.log('Environment ' + answers.name + ' set');
     });
   }

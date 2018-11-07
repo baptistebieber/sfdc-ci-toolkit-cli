@@ -28,30 +28,10 @@ module.exports = class DeployGenerator extends Generator {
   }
 
   async execute() {
-    switch(this.options.type) {
-      case 'full':
-        this._full()
-        break
-      case 'pre':
-        this._pre()
-        break
-      case 'post':
-        this._post()
-        break
-      case 'diff':
-        this._diff()
-        break
-      default:
-        break
-    }
-  }
-
-  _full() {
-    this.log('Execute Full')
 
     if((this.options.envi == '' || this.options.envi == undefined) && this._conf.has('default')) {
-      this.log('Default env used: '+ this._conf.get('default'))
-      this.options.envi = this._conf.get('default')
+      this.log('Default env used: '+ this._conf.get('default'));
+      this.options.envi = this._conf.get('default');
     }
     else {
       this.log('Env used: ', this.options.envi)
@@ -60,6 +40,30 @@ module.exports = class DeployGenerator extends Generator {
     if(!this._conf.has(this.options.envi)) {
       throw new Error('The environment doesn\'t exist');
     }
+
+    switch(this.options.type) {
+      case 'full':
+        this._full();
+        break;
+      case 'pre':
+        this._pre();
+        break;
+      case 'post':
+        this._post();
+        break;
+      case 'diff':
+        this._diff();
+        break;
+      case 'package':
+        this._package();
+        break;
+      default:
+        break;
+    }
+  }
+
+  _full() {
+    this.log('Execute Full')
 
     let env = this._conf.get(this.options.envi);
 
@@ -97,18 +101,6 @@ module.exports = class DeployGenerator extends Generator {
   _diff() {
     this.log('Execute Diff')
 
-    if((this.options.envi == '' || this.options.envi == undefined) && this._conf.has('default')) {
-      this.log('Default env used: '+ this._conf.get('default'))
-      this.options.envi = this._conf.get('default')
-    }
-    else {
-      this.log('Env used: ', this.options.envi)
-    }
-
-    if(!this._conf.has(this.options.envi)) {
-      throw new Error('The environment doesn\'t exist');
-    }
-
     let env = this._conf.get(this.options.envi);
 
     let config = {
@@ -126,27 +118,41 @@ module.exports = class DeployGenerator extends Generator {
       singlePackage: true,
       verbose: true,
       logger: console,
-      indent: env.indent || '    '
+      indent: env.indent || '    ',
     };
 
     Promise.all([sfdcMetadata.diff(config.from, config.to, config.root, config.src, config.tmp, config)])
     .then(res => {
-      sfdcMetadata.deploy(config.tmp, config)
+      // sfdcMetadata.deploy(config.tmp, config)
     })
     .catch(err => {
       this.log('Error '+PLUGIN_NAME+': '+err.message);
-    })
+    });
+  }
+
+  _package() {
+
+    if(this.options.p == null) {
+      throw new Error('You need to specified package')
+    }
+
+    let env = this._conf.get(this.options.envi);
+
+    this.log('Execute Package')
+    if(!this._conf.has(this.options.envi)) {
+      throw new Error('The environment doesn\'t exist');
+    }
   }
 
   _pre() {
-    this.log('Execute Full')
+    this.log('Execute Pre')
     if(!this._conf.has(this.options.envi)) {
       throw new Error('The environment doesn\'t exist');
     }
   }
 
   _post() {
-    this.log('Execute Full')
+    this.log('Execute Post')
     if(!this._conf.has(this.options.envi)) {
       throw new Error('The environment doesn\'t exist');
     }

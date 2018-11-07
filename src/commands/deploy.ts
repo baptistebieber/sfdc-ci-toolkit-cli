@@ -17,9 +17,10 @@ export default abstract class DeployCommand extends Base {
     env: flags.string({description: 'name of environment', required: false}),
     from: flags.string({description: 'Git Compare From Commit/Branch', required: false}),
     to: flags.string({description: 'Git Compare To Commit/Branch', required: false}),
-  }
+    p: flags.string({description: 'Specific package', required: false}),
+  };
   static args = [
-    {name: 'type', description: 'type to run', required: true, default: 'full', options: ['full', 'post', 'pre', 'diff']}
+    {name: 'type', description: 'type to run', required: true, default: 'full', options: ['full', 'post', 'pre', 'diff', 'package']},
   ]
 
   async run() {
@@ -29,6 +30,7 @@ export default abstract class DeployCommand extends Base {
       envi: flags.env,
       from: flags.from,
       to: flags.to,
+      p: flags.p,
     } as Options)
   }
 }
